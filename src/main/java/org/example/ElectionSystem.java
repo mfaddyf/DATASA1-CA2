@@ -11,7 +11,7 @@ public class ElectionSystem extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ElectionSystem.class.getResource("election_ssytem.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ElectionSystem.class.getResource("election_system.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1000, 800);
         stage.setTitle("Election Management System!");
         stage.setScene(scene);
