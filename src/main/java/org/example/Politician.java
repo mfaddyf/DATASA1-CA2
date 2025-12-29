@@ -28,5 +28,64 @@ public class Politician implements Serializable {
         return electionsStoodIn;
     }
 
-    // Getters and setters...
+    // ---
+    // GETTERS
+    // ---
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public String getParty() {
+        return party;
+    }
+
+    public String getCounty() {
+        return county;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public MLinkedList<Election> getElectionsStoodIn() {
+        return electionsStoodIn;
+    }
+
+    // ---
+    // SETTERS
+    // ---
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public void setParty(String party) {
+        this.party = party;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setElectionsStoodIn(MLinkedList<Election> electionsStoodIn) {
+        this.electionsStoodIn = electionsStoodIn;
+    }
+
+    public String toString() {
+        return name + " (" + party + ", " + county + ")";
+    }
+
 }

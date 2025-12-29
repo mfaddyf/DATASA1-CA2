@@ -14,5 +14,41 @@ public class Candidate implements Serializable {
         this.votes = votes;
     }
 
-    // Getters and setters...
+    // ---
+    // GETTERS
+    // ---
+
+    public Politician getPolitician() {
+        return politician;
+    }
+
+    public String getPartyAtElection() {
+        return partyAtElection;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    // ---
+    // SETTERS
+    // ---
+
+    public void setPolitician(Politician politician) {
+        this.politician = politician;
+    }
+
+    public void setPartyAtElection(String partyAtElection) {
+        this.partyAtElection = partyAtElection;
+    }
+
+
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
+    @Override
+    public String toString() {
+        return politician.getName() + " (" + partyAtElection + ") - " + votes + " votes";
+    }
 }

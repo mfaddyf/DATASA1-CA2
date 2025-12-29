@@ -26,5 +26,52 @@ public class Election implements Serializable {
         return candidates;
     }
 
-    // Getters and setters...
+    // ---
+    // GETTERS
+    // ---
+
+    public String getType() {
+        return type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public int getSeats() {
+        return seats;
+    }
+
+    // ---
+    // SETTERS
+    // ---
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    public void setCandidates(MLinkedList<Candidate> candidates) {
+        this.candidates = candidates;
+    }
+
+    @Override
+    public String toString() {
+        return "Election Type: " + type + ", Location: " + location + ", Date: " + date;
+    }
 }

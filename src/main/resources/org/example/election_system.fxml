@@ -1,14 +1,216 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.ElectionSystemController"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.ElectionSystemController">
 
-</AnchorPane>
+    <!-- ===================== TOP BAR ===================== -->
+    <top>
+        <VBox spacing="8">
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="Save Data"/>
+                    <MenuItem text="Load Data"/>
+                    <MenuItem text="Reset System"/>
+                </Menu>
+                <Menu text="View">
+                    <MenuItem text="Show Statistics"/>
+                </Menu>
+            </MenuBar>
+
+            <Label text="Elections Information System"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold;"
+                   BorderPane.alignment="CENTER">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+            </Label>
+        </VBox>
+    </top>
+
+    <!-- ===================== MAIN TABS ===================== -->
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <!-- ========== POLITICIANS TAB ========== -->
+            <Tab text="Politicians">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+
+                    <TitledPane text="Add Politician" expanded="true">
+                        <GridPane hgap="10" vgap="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="140"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="polNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Date of Birth:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="polDobField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Party:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="polPartyField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="County:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <TextField fx:id="polCountyField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Label text="Photo URL:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <TextField fx:id="polImageField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <Button text="Add Politician"
+                                    GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </TitledPane>
+
+                    <TitledPane text="Politician List" expanded="true">
+                        <ListView fx:id="politicianList" prefHeight="250"/>
+                    </TitledPane>
+
+                </VBox>
+            </Tab>
+
+            <!-- ========== ELECTIONS TAB ========== -->
+            <Tab text="Elections">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+
+                    <TitledPane text="Add Election" expanded="true">
+                        <GridPane hgap="10" vgap="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="140"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Election Type:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="electionTypeCombo"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Location:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="electionLocationField"
+                                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Date/Year:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="electionDateField"
+                                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Number of Seats:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Spinner fx:id="electionSeatsSpinner"
+                                     GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Button text="Add Election"
+                                    GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </TitledPane>
+
+                    <TitledPane text="Election List" expanded="true">
+                        <ListView fx:id="electionList" prefHeight="250"/>
+                    </TitledPane>
+
+                </VBox>
+            </Tab>
+
+            <!-- ========== CANDIDATES TAB ========== -->
+            <Tab text="Candidates">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+
+                    <TitledPane text="Add Candidate to Election" expanded="true">
+                        <GridPane hgap="10" vgap="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+
+                            <columnConstraints>
+                                <ColumnConstraints halignment="RIGHT" minWidth="140"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Election:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="candidateElectionCombo"
+                                      GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Politician:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <ComboBox fx:id="candidatePoliticianCombo"
+                                      GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Party at Election:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="candidatePartyField"
+                                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Votes:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Spinner fx:id="candidateVotesSpinner"
+                                     GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Button text="Add Candidate"
+                                    GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </TitledPane>
+
+                    <TitledPane text="Candidates in Selected Election" expanded="true">
+                        <ListView fx:id="candidateList" prefHeight="250"/>
+                    </TitledPane>
+
+                </VBox>
+            </Tab>
+
+            <!-- ========== SEARCH TAB ========== -->
+            <Tab text="Search">
+                <VBox spacing="12">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+
+                    <TitledPane text="Search Politicians" expanded="true">
+                        <VBox spacing="8">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+
+                            <TextField fx:id="searchPolNameField" promptText="Name contains..."/>
+                            <TextField fx:id="searchPolPartyField" promptText="Party..."/>
+                            <TextField fx:id="searchPolCountyField" promptText="County..."/>
+                            <Button text="Search Politicians"/>
+                        </VBox>
+                    </TitledPane>
+
+                    <TitledPane text="Search Elections" expanded="false">
+                        <VBox spacing="8">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+
+                            <TextField fx:id="searchElectionTypeField" promptText="Type..."/>
+                            <TextField fx:id="searchElectionYearField" promptText="Year..."/>
+                            <Button text="Search Elections"/>
+                        </VBox>
+                    </TitledPane>
+
+                    <TitledPane text="Search Results" expanded="true">
+                        <TextArea fx:id="searchResultsArea" prefRowCount="15" wrapText="true"/>
+                    </TitledPane>
+
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+</BorderPane>
