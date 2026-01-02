@@ -41,7 +41,7 @@
                         <Insets top="15" right="15" bottom="15" left="15"/>
                     </padding>
 
-                    <TitledPane text="Add Politician" expanded="true">
+                    <TitledPane text="Add / Edit Politician" expanded="true">
                         <GridPane hgap="10" vgap="10">
                             <padding>
                                 <Insets top="10" right="10" bottom="10" left="10"/>
@@ -67,8 +67,17 @@
                             <Label text="Photo URL:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                             <TextField fx:id="polImageField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
+                            <!-- ADD BUTTON -->
                             <Button text="Add Politician"
                                     GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                            <!-- UPDATE + DELETE BUTTONS (aligned under Add) -->
+                            <HBox spacing="10"
+                                  GridPane.rowIndex="6" GridPane.columnIndex="1">
+                                <Button text="Update Politician"/>
+                                <Button text="Delete Politician"/>
+                            </HBox>
+
                         </GridPane>
                     </TitledPane>
 
@@ -86,7 +95,7 @@
                         <Insets top="15" right="15" bottom="15" left="15"/>
                     </padding>
 
-                    <TitledPane text="Add Election" expanded="true">
+                    <TitledPane text="Add / Edit Election" expanded="true">
                         <GridPane hgap="10" vgap="10">
                             <padding>
                                 <Insets top="10" right="10" bottom="10" left="10"/>
@@ -113,8 +122,17 @@
                             <Spinner fx:id="electionSeatsSpinner"
                                      GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
+                            <!-- ADD BUTTON -->
                             <Button text="Add Election"
                                     GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <!-- UPDATE + DELETE BUTTONS -->
+                            <HBox spacing="10"
+                                  GridPane.rowIndex="5" GridPane.columnIndex="1">
+                                <Button text="Update Election"/>
+                                <Button text="Delete Election"/>
+                            </HBox>
+
                         </GridPane>
                     </TitledPane>
 
@@ -132,7 +150,7 @@
                         <Insets top="15" right="15" bottom="15" left="15"/>
                     </padding>
 
-                    <TitledPane text="Add Candidate to Election" expanded="true">
+                    <TitledPane text="Add / Edit Candidate" expanded="true">
                         <GridPane hgap="10" vgap="10">
                             <padding>
                                 <Insets top="10" right="10" bottom="10" left="10"/>
@@ -159,8 +177,17 @@
                             <Spinner fx:id="candidateVotesSpinner"
                                      GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
+                            <!-- ADD BUTTON -->
                             <Button text="Add Candidate"
                                     GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <!-- UPDATE + DELETE BUTTONS -->
+                            <HBox spacing="10"
+                                  GridPane.rowIndex="5" GridPane.columnIndex="1">
+                                <Button text="Update Candidate"/>
+                                <Button text="Delete Candidate"/>
+                            </HBox>
+
                         </GridPane>
                     </TitledPane>
 

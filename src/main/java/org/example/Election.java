@@ -18,14 +18,6 @@ public class Election implements Serializable {
         this.candidates = new MLinkedList<>();
     }
 
-    public void addCandidate(Candidate c) {
-        candidates.addElement(c);
-    }
-
-    public MLinkedList<Candidate> getCandidates() {
-        return candidates;
-    }
-
     // ---
     // GETTERS
     // ---
@@ -68,6 +60,65 @@ public class Election implements Serializable {
 
     public void setCandidates(MLinkedList<Candidate> candidates) {
         this.candidates = candidates;
+    }
+
+    public void addCandidate(Candidate c) {
+        candidates.addElement(c);
+    }
+
+    public MLinkedList<Candidate> getCandidates() {
+        return candidates;
+    }
+
+    public Candidate findCandidateByDisplay(String display) {
+        Node<Candidate> n = candidates.getHead();
+        while (n != null) {
+            if (n.data.toString().equals(display)) {
+                return n.data;
+            }
+            n = n.next;
+        }
+        return null;
+    }
+
+    public void updateCandidate(Candidate updated) {
+        Node<Candidate> n = candidates.getHead();
+        while (n != null) {
+            Candidate c = n.data;
+            if (c.getPolitician().equals(updated.getPolitician())) {
+                n.data = updated; return;
+            }
+            n = n.next;
+        }
+    }
+
+    public void removeCandidateByPolitician(Politician p) {
+        Node<Candidate> current = candidates.getHead();
+        Node<Candidate> prev = null;
+
+        while (current != null) {
+            if (current.data.getPolitician().equals(p)) {
+
+                if (prev == null) {
+                    candidates.head = current.next;
+                }
+                else {
+                    prev.next = current.next;
+                }
+                current = current.next;
+            }
+            else {
+                prev = current;
+                current = current.next;
+            }
+        }
+    }
+
+
+    public boolean matches(Election other) {
+        return this.type.equalsIgnoreCase(other.type) &&
+                this.location.equalsIgnoreCase(other.location) &&
+                this.date.equalsIgnoreCase(other.date);
     }
 
     @Override
