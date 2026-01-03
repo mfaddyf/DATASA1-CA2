@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class Politician implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String dob;
     private String party;
@@ -84,8 +86,8 @@ public class Politician implements Serializable {
         this.electionsStoodIn = electionsStoodIn;
     }
 
+    @Override
     public String toString() {
-        return name + " (" + party + ", " + county + ")";
+        return name + " | " + dob + " | " + party + " | " + county + " | " + imageUrl;
     }
-
 }

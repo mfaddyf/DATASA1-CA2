@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class Election implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String type;
     private String location;
     private String date;
@@ -70,59 +72,12 @@ public class Election implements Serializable {
         return candidates;
     }
 
-    public Candidate findCandidateByDisplay(String display) {
-        Node<Candidate> n = candidates.getHead();
-        while (n != null) {
-            if (n.data.toString().equals(display)) {
-                return n.data;
-            }
-            n = n.next;
-        }
-        return null;
-    }
-
-    public void updateCandidate(Candidate updated) {
-        Node<Candidate> n = candidates.getHead();
-        while (n != null) {
-            Candidate c = n.data;
-            if (c.getPolitician().equals(updated.getPolitician())) {
-                n.data = updated; return;
-            }
-            n = n.next;
-        }
-    }
-
-    public void removeCandidateByPolitician(Politician p) {
-        Node<Candidate> current = candidates.getHead();
-        Node<Candidate> prev = null;
-
-        while (current != null) {
-            if (current.data.getPolitician().equals(p)) {
-
-                if (prev == null) {
-                    candidates.head = current.next;
-                }
-                else {
-                    prev.next = current.next;
-                }
-                current = current.next;
-            }
-            else {
-                prev = current;
-                current = current.next;
-            }
-        }
-    }
-
-
-    public boolean matches(Election other) {
-        return this.type.equalsIgnoreCase(other.type) &&
-                this.location.equalsIgnoreCase(other.location) &&
-                this.date.equalsIgnoreCase(other.date);
+    public void removeCandidate(Candidate c) {
+        candidates.remove(c);   // remove by reference
     }
 
     @Override
     public String toString() {
-        return "Election Type: " + type + ", Location: " + location + ", Date: " + date;
+        return type + " | " + location + " | " + date + " | Seats: " + seats;
     }
 }

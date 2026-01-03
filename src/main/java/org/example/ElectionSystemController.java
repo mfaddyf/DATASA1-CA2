@@ -10,34 +10,69 @@ public class ElectionSystemController {
 
 
     // -------- POLITICIAN FIELDS --------
-    @FXML private TextField polNameField;
-    @FXML private TextField polDobField;
-    @FXML private TextField polPartyField;
-    @FXML private TextField polCountyField;
-    @FXML private TextField polImageField;
-    @FXML private ListView<String> politicianList;
+    @FXML
+    private TextField polNameField;
+    @FXML
+    private TextField polDobField;
+    @FXML
+    private TextField polPartyField;
+    @FXML
+    private TextField polCountyField;
+    @FXML
+    private TextField polImageField;
+    @FXML
+    private ListView<Politician> politicianList;
+
+    private Politician selectedPolitician;
+
 
     // -------- ELECTION FIELDS --------
-    @FXML private ComboBox<String> electionTypeCombo;
-    @FXML private TextField electionLocationField;
-    @FXML private TextField electionDateField;
-    @FXML private Spinner<Integer> electionSeatsSpinner;
-    @FXML private ListView<String> electionList;
+    @FXML
+    private ComboBox<String> electionTypeCombo;
+    @FXML
+    private TextField electionLocationField;
+    @FXML
+    private TextField electionDateField;
+    @FXML
+    private Spinner<Integer> electionSeatsSpinner;
+    @FXML
+    private ListView<Election> electionList;
+
+    private Election selectedElection;
 
     // -------- CANDIDATE FIELDS --------
-    @FXML private ComboBox<String> candidateElectionCombo;
-    @FXML private ComboBox<String> candidatePoliticianCombo;
-    @FXML private TextField candidatePartyField;
-    @FXML private Spinner<Integer> candidateVotesSpinner;
-    @FXML private ListView<String> candidateList;
+    @FXML
+    private ComboBox<String> candidateElectionCombo;
+    @FXML
+    private ComboBox<String> candidatePoliticianCombo;
+    @FXML
+    private TextField candidatePartyField;
+    @FXML
+    private Spinner<Integer> candidateVotesSpinner;
+    @FXML
+    private ListView<Candidate> candidateList;
+
+    private Candidate selectedCandidate;
 
     // -------- SEARCH FIELDS --------
-    @FXML private TextField searchPolNameField;
-    @FXML private TextField searchPolPartyField;
-    @FXML private TextField searchPolCountyField;
-    @FXML private TextField searchElectionTypeField;
-    @FXML private TextField searchElectionYearField;
-    @FXML private TextArea searchResultsArea;
+    @FXML
+    private TextField searchPolNameField;
+    @FXML
+    private TextField searchPolPartyField;
+    @FXML
+    private TextField searchPolCountyField;
+    @FXML
+    private TextField searchElectionTypeField;
+    @FXML
+    private TextField searchElectionYearField;
+    @FXML
+    private TextArea searchResultsArea;
+
+    // -------- DROPDOWN SORTING FIELDS --------
+    @FXML
+    private ComboBox<String> searchSortComboPol;
+    @FXML
+    private ComboBox<String> searchSortComboEle;
 
     // ============================================================
     // INITIALIZE
@@ -47,7 +82,7 @@ public class ElectionSystemController {
 
         // Election types
         electionTypeCombo.setItems(FXCollections.observableArrayList(
-                "General", "Local", "European", "Presidential"
+                "General", "Local", "Presidential"
         ));
 
         // Spinners
@@ -61,20 +96,37 @@ public class ElectionSystemController {
         );
         candidateVotesSpinner.setEditable(true);
 
-        // LIST SELECTION LISTENERS
-        politicianList.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldV, newV) -> loadSelectedPoliticianIntoFields(newV)
-        );
+        searchSortComboPol.setItems(FXCollections.observableArrayList(
+                "Alphabetical (A-Z)", "Party, then Name"
+        ));
 
-        electionList.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldV, newV) -> {
-                    loadSelectedElectionIntoFields(newV);
-                    showCandidatesForSelectedElection();
+        searchSortComboEle.setItems(FXCollections.observableArrayList(
+                "Type (A-Z)", "Year (Ascending)", "Year (Descending)"
+        ));
+
+        electionList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                selectedElection = newVal;
+                loadElectionIntoFields(newVal);
+                showCandidatesForSelectedElection();
+            }
+        });
+
+        politicianList.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+                    if (newV != null) {
+                        selectedPolitician = newV;
+                        loadSelectedPoliticianIntoFields(newV);
+                    }
                 }
         );
 
         candidateList.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldV, newV) -> loadSelectedCandidateIntoFields(newV)
+                (obs, oldV, newV) -> {
+                    if (newV != null) {
+                        selectedCandidate = newV;
+                        loadSelectedCandidateIntoFields(newV);
+                    }
+                }
         );
     }
 
@@ -101,44 +153,32 @@ public class ElectionSystemController {
 
     @FXML
     public void handleUpdatePolitician() {
-        String selected = politicianList.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selectedPolitician == null) return;
 
         Politician updated = new Politician(
-                safe(polNameField),
-                safe(polDobField),
-                safe(polPartyField),
-                safe(polCountyField),
-                safe(polImageField)
+                polNameField.getText(),
+                polDobField.getText(),
+                polPartyField.getText(),
+                polCountyField.getText(),
+                polImageField.getText()
         );
 
-        system.updatePolitician(updated);
+        system.updatePolitician(selectedPolitician, updated);
         refreshPoliticianViews();
     }
+
 
     @FXML
     public void handleDeletePolitician() {
-        String selected = politicianList.getSelectionModel().getSelectedItem();
+        Politician selected = politicianList.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
-        String[] parts = selected.split("\\|");
-        String name = parts[0].trim();
-        String dob = parts[1].trim();
-
-        system.deletePolitician(name, dob);
+        system.deletePolitician(selected);
         refreshPoliticianViews();
+        candidateList.getItems().clear();
     }
 
-    private void loadSelectedPoliticianIntoFields(String display) {
-        if (display == null) return;
-
-        String[] parts = display.split("\\|");
-        if (parts.length < 2) return;
-
-        String name = parts[0].trim();
-        String dob = parts[1].trim();
-
-        Politician p = system.findPoliticianByNameAndDob(name, dob);
+    private void loadSelectedPoliticianIntoFields(Politician p) {
         if (p == null) return;
 
         polNameField.setText(p.getName());
@@ -149,15 +189,16 @@ public class ElectionSystemController {
     }
 
     private void refreshPoliticianViews() {
+        RMSortingAlgo.sortList(system.getPoliticians(), new RMSortingAlgo.PoliticianNameComp());
+
         politicianList.getItems().clear();
         candidatePoliticianCombo.getItems().clear();
 
         Node<Politician> n = system.getPoliticians().getHead();
         while (n != null) {
             Politician p = n.data;
-            String display = p.getName() + " | " + p.getDob();
-            politicianList.getItems().add(display);
-            candidatePoliticianCombo.getItems().add(display);
+            politicianList.getItems().add(p);
+            candidatePoliticianCombo.getItems().add(p.getName() + " | " + p.getDob());
             n = n.next;
         }
     }
@@ -192,38 +233,32 @@ public class ElectionSystemController {
 
     @FXML
     public void handleUpdateElection() {
-        String selected = electionList.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selectedElection == null) return;
 
         Election updated = new Election(
                 electionTypeCombo.getValue(),
-                safe(electionLocationField),
-                safe(electionDateField),
+                electionLocationField.getText(),
+                electionDateField.getText(),
                 electionSeatsSpinner.getValue()
         );
 
-        system.updateElection(updated);
+        system.updateElection(selectedElection, updated);
         refreshElectionViews();
     }
 
+
+
     @FXML
     public void handleDeleteElection() {
-        String selected = electionList.getSelectionModel().getSelectedItem();
+        Election selected = electionList.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
-        Election e = findElectionByDisplay(selected);
-        if (e != null) {
-            system.deleteElection(e);
-            refreshElectionViews();
-        }
+        system.deleteElection(selected);
+        refreshElectionViews();
+        candidateList.getItems().clear();
     }
 
-    private void loadSelectedElectionIntoFields(String display) {
-        if (display == null) return;
-
-        Election e = findElectionByDisplay(display);
-        if (e == null) return;
-
+    private void loadElectionIntoFields(Election e) {
         electionTypeCombo.setValue(e.getType());
         electionLocationField.setText(e.getLocation());
         electionDateField.setText(e.getDate());
@@ -237,12 +272,12 @@ public class ElectionSystemController {
         Node<Election> n = system.getElections().getHead();
         while (n != null) {
             Election e = n.data;
-            String display = e.toString();
-            electionList.getItems().add(display);
-            candidateElectionCombo.getItems().add(display);
+            electionList.getItems().add(e);
+            candidateElectionCombo.getItems().add(e.toString());
             n = n.next;
         }
     }
+
 
     private void clearElectionInputs() {
         electionTypeCombo.getSelectionModel().clearSelection();
@@ -281,7 +316,8 @@ public class ElectionSystemController {
         Candidate c = new Candidate(
                 p,
                 safe(candidatePartyField),
-                candidateVotesSpinner.getValue()
+                candidateVotesSpinner.getValue(),
+                e
         );
 
         system.addCandidateToElection(e, c);
@@ -291,45 +327,30 @@ public class ElectionSystemController {
 
     @FXML
     public void handleUpdateCandidate() {
-        String electionDisplay = candidateElectionCombo.getValue();
-        String candidateDisplay = candidateList.getSelectionModel().getSelectedItem();
-        if (electionDisplay == null || candidateDisplay == null) return;
+        Candidate c = candidateList.getSelectionModel().getSelectedItem();
+        if (c == null) return;
 
-        Election e = findElectionByDisplay(electionDisplay);
-        Candidate old = e.findCandidateByDisplay(candidateDisplay);
-
-        Candidate updated = new Candidate(
-                old.getPolitician(),
-                safe(candidatePartyField),
-                candidateVotesSpinner.getValue()
-        );
-
-        e.updateCandidate(updated);
-        refreshCandidateList(e);
+        c.setPartyAtElection(candidatePartyField.getText());
+        c.setVotes(candidateVotesSpinner.getValue());
+        candidateList.refresh();
     }
+
 
     @FXML
     public void handleDeleteCandidate() {
-        String electionDisplay = candidateElectionCombo.getValue();
-        String candidateDisplay = candidateList.getSelectionModel().getSelectedItem();
-        if (electionDisplay == null || candidateDisplay == null) return;
+        Candidate c = candidateList.getSelectionModel().getSelectedItem();
+        if (c == null) return;
 
-        Election e = findElectionByDisplay(electionDisplay);
-        Candidate c = e.findCandidateByDisplay(candidateDisplay);
+        Election e = c.getElection();
+        e.removeCandidate(c);
 
-        e.removeCandidateByPolitician(c.getPolitician());
         refreshCandidateList(e);
     }
 
-    private void loadSelectedCandidateIntoFields(String display) {
-        if (display == null) return;
 
-        Election e = findElectionByDisplay(
-                electionList.getSelectionModel().getSelectedItem()
-        );
-        if (e == null) return;
 
-        Candidate c = e.findCandidateByDisplay(display);
+
+    private void loadSelectedCandidateIntoFields(Candidate c) {
         if (c == null) return;
 
         candidatePoliticianCombo.setValue(
@@ -339,15 +360,12 @@ public class ElectionSystemController {
         candidateVotesSpinner.getValueFactory().setValue(c.getVotes());
     }
 
+
     private void showCandidatesForSelectedElection() {
-        String selected = electionList.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            candidateList.getItems().clear();
-            return;
-        }
-        Election e = findElectionByDisplay(selected);
+        Election e = electionList.getSelectionModel().getSelectedItem();
         refreshCandidateList(e);
     }
+
 
     private void refreshCandidateList(Election e) {
         candidateList.getItems().clear();
@@ -355,10 +373,37 @@ public class ElectionSystemController {
 
         Node<Candidate> n = e.getCandidates().getHead();
         while (n != null) {
-            candidateList.getItems().add(n.data.toString());
+            candidateList.getItems().add(n.data);
             n = n.next;
         }
     }
+
+    private void refreshCandidateViews() {
+
+        candidateElectionCombo.getItems().clear();
+        Node<Election> eNode = system.getElections().getHead();
+        while (eNode != null) {
+            candidateElectionCombo.getItems().add(eNode.data.toString());
+            eNode = eNode.next;
+        }
+
+        candidatePoliticianCombo.getItems().clear();
+        Node<Politician> pNode = system.getPoliticians().getHead();
+        while (pNode != null) {
+            Politician p = pNode.data;
+            candidatePoliticianCombo.getItems().add(
+                    p.getName() + " | " + p.getDob()
+            );
+            pNode = pNode.next;
+        }
+
+        Election selected = electionList.getSelectionModel().getSelectedItem();
+        refreshCandidateList(selected);
+
+        clearCandidateInputs();
+    }
+
+
 
     private void clearCandidateInputs() {
         candidateElectionCombo.getSelectionModel().clearSelection();
@@ -378,15 +423,30 @@ public class ElectionSystemController {
                 safe(searchPolPartyField),
                 safe(searchPolCountyField)
         );
+
+        String sortOption = searchSortComboPol.getValue();
+
+        if (sortOption != null) {
+            switch (sortOption) {
+                case "Alphabetical (A–Z)":
+                    RMSortingAlgo.sortList(results, new RMSortingAlgo.PoliticianNameComp());
+                    break;
+
+                case "Party, then Name":
+                    RMSortingAlgo.sortList(results, new RMSortingAlgo.PoliticianPartyTheNameComp());
+                    break;
+            }
+        }
+
         String output = "";
         Node<Politician> n = results.getHead();
         while (n != null) {
             output += n.data.toString() + "\n";
             n = n.next;
         }
+
         searchResultsArea.setText(output);
     }
-
 
     @FXML
     public void handleSearchElections() {
@@ -394,14 +454,35 @@ public class ElectionSystemController {
                 safe(searchElectionTypeField),
                 safe(searchElectionYearField)
         );
+
+        String sortOption = searchSortComboEle.getValue();
+
+        if (sortOption != null) {
+            switch (sortOption) {
+                case "Type (A–Z)":
+                    RMSortingAlgo.sortList(results, new RMSortingAlgo.ElectionTypeComp());
+                    break;
+
+                case "Year (Ascending)":
+                    RMSortingAlgo.sortList(results, new RMSortingAlgo.ElectionYearAscComp());
+                    break;
+
+                case "Year (Descending)":
+                    RMSortingAlgo.sortList(results, new RMSortingAlgo.ElectionYearDescComp());
+                    break;
+            }
+        }
+
         String output = "";
         Node<Election> n = results.getHead();
         while (n != null) {
             output += n.data.toString() + "\n";
             n = n.next;
         }
+
         searchResultsArea.setText(output);
     }
+
 
 
     // ============================================================
@@ -416,17 +497,24 @@ public class ElectionSystemController {
     @FXML
     public void handleLoadData() {
         system = ElectionSystemManager.loadFromFile("elections.dat");
+
         refreshPoliticianViews();
         refreshElectionViews();
-        candidateList.getItems().clear();
+        refreshCandidateViews();
+
+        if (!electionList.getItems().isEmpty()) {
+            electionList.getSelectionModel().select(0);
+            showCandidatesForSelectedElection();
+        }
     }
+
 
     @FXML
     public void handleResetSystem() {
         system.reset();
         refreshPoliticianViews();
         refreshElectionViews();
-        candidateList.getItems().clear();
+        refreshCandidateViews();
         searchResultsArea.clear();
     }
 

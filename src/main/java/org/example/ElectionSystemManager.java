@@ -63,59 +63,57 @@ public class ElectionSystemManager implements Serializable {
     // UPDATE METHODS
     // ============================================================
 
-    public void updatePolitician(Politician updated) {
-        String key = buildPoliticianKey(updated);
-        politicianTable.put(key, updated);
+    public void updatePolitician(Politician original, Politician updated) {
+        String oldKey = buildPoliticianKey(original);
 
-        Node<Politician> n = politicians.getHead();
-        while (n != null) {
-            Politician p = n.data;
-            if (p.getName().equalsIgnoreCase(updated.getName()) &&
-                    p.getDob().equals(updated.getDob())) {
-                n.data = updated;
-                return;
-            }
-            n = n.next;
-        }
+        // remove old key
+        politicianTable.remove(oldKey);
+
+        // update fields
+        original.setName(updated.getName());
+        original.setDob(updated.getDob());
+        original.setParty(updated.getParty());
+        original.setCounty(updated.getCounty());
+        original.setImageUrl(updated.getImageUrl());
+
+        // insert new key
+        String newKey = buildPoliticianKey(original);
+        politicianTable.put(newKey, original);
     }
 
-    public void updateElection(Election updated) {
-        String key = buildElectionKey(updated);
-        electionTable.put(key, updated);
 
-        Node<Election> n = elections.getHead();
-        while (n != null) {
-            Election e = n.data;
-            if (e.matches(updated)) {
-                n.data = updated;
-                return;
-            }
-            n = n.next;
-        }
+    public void updateElection(Election original, Election updated) {
+        String oldKey = buildElectionKey(original);
+        electionTable.remove(oldKey);
+
+        original.setType(updated.getType());
+        original.setLocation(updated.getLocation());
+        original.setDate(updated.getDate());
+        original.setSeats(updated.getSeats());
+
+        String newKey = buildElectionKey(original);
+        electionTable.put(newKey, original);
     }
+
+
 
     // ============================================================
     // DELETE METHODS
     // ============================================================
 
-    public boolean deletePolitician(String name, String dob) {
-        String key = name.toLowerCase() + "|" + dob;
-
-        Politician p = findPoliticianByNameAndDob(name, dob);
+    public boolean deletePolitician(Politician p) {
         if (p == null) return false;
 
-        politicianTable.remove(key);
-        politicians.remove(p);
+        String key = buildPoliticianKey(p);
+        boolean removed = politicianTable.remove(key);
 
-        // Remove from all elections
-        Node<Election> e = elections.getHead();
-        while (e != null) {
-            e.data.removeCandidateByPolitician(p);
-            e = e.next;
+        if (removed) {
+            politicians.remove(p);
         }
 
-        return true;
+        return removed;
     }
+
 
     public boolean deleteElection(Election e) {
         String key = buildElectionKey(e);
@@ -242,7 +240,8 @@ public class ElectionSystemManager implements Serializable {
             if (o instanceof ElectionSystemManager) {
                 return (ElectionSystemManager) o;
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return new ElectionSystemManager();
     }
 

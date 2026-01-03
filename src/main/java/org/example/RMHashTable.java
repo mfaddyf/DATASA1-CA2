@@ -1,8 +1,15 @@
 package org.example;
 
-public class RMHashTable {
+import java.io.Serializable;
 
-    private static class Node {
+public class RMHashTable implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private static class Node implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         String key; // unique ID e.g. PoliticianID
         Object value; // object stored like politician, election etc
         Node next; // linked to next node in chain

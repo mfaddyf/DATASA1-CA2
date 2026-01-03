@@ -11,9 +11,9 @@
         <VBox spacing="8">
             <MenuBar>
                 <Menu text="File">
-                    <MenuItem text="Save Data"/>
-                    <MenuItem text="Load Data"/>
-                    <MenuItem text="Reset System"/>
+                    <MenuItem text="Save Data" onAction="#handleSaveData"/>
+                    <MenuItem text="Load Data" onAction="#handleLoadData"/>
+                    <MenuItem text="Reset System" onAction="#handleResetSystem"/>
                 </Menu>
                 <Menu text="View">
                     <MenuItem text="Show Statistics"/>
@@ -69,13 +69,14 @@
 
                             <!-- ADD BUTTON -->
                             <Button text="Add Politician"
+                                    onAction="#handleAddPolitician"
                                     GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                            <!-- UPDATE + DELETE BUTTONS (aligned under Add) -->
+                            <!-- UPDATE + DELETE BUTTONS -->
                             <HBox spacing="10"
                                   GridPane.rowIndex="6" GridPane.columnIndex="1">
-                                <Button text="Update Politician"/>
-                                <Button text="Delete Politician"/>
+                                <Button text="Update Politician" onAction="#handleUpdatePolitician"/>
+                                <Button text="Delete Politician" onAction="#handleDeletePolitician"/>
                             </HBox>
 
                         </GridPane>
@@ -124,13 +125,14 @@
 
                             <!-- ADD BUTTON -->
                             <Button text="Add Election"
+                                    onAction="#handleAddElection"
                                     GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
                             <!-- UPDATE + DELETE BUTTONS -->
                             <HBox spacing="10"
                                   GridPane.rowIndex="5" GridPane.columnIndex="1">
-                                <Button text="Update Election"/>
-                                <Button text="Delete Election"/>
+                                <Button text="Update Election" onAction="#handleUpdateElection"/>
+                                <Button text="Delete Election" onAction="#handleDeleteElection"/>
                             </HBox>
 
                         </GridPane>
@@ -179,19 +181,20 @@
 
                             <!-- ADD BUTTON -->
                             <Button text="Add Candidate"
+                                    onAction="#handleAddCandidate"
                                     GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
                             <!-- UPDATE + DELETE BUTTONS -->
                             <HBox spacing="10"
                                   GridPane.rowIndex="5" GridPane.columnIndex="1">
-                                <Button text="Update Candidate"/>
-                                <Button text="Delete Candidate"/>
+                                <Button text="Update Candidate" onAction="#handleUpdateCandidate"/>
+                                <Button text="Delete Candidate" onAction="#handleDeleteCandidate"/>
                             </HBox>
 
                         </GridPane>
                     </TitledPane>
 
-                    <TitledPane text="Candidates in Selected Election" expanded="true">
+                    <TitledPane text="Candidates" expanded="true">
                         <ListView fx:id="candidateList" prefHeight="250"/>
                     </TitledPane>
 
@@ -214,7 +217,10 @@
                             <TextField fx:id="searchPolNameField" promptText="Name contains..."/>
                             <TextField fx:id="searchPolPartyField" promptText="Party..."/>
                             <TextField fx:id="searchPolCountyField" promptText="County..."/>
-                            <Button text="Search Politicians"/>
+
+                            <ComboBox fx:id="searchSortComboPol" promptText="Sort by..."/>
+
+                            <Button text="Search Politicians" onAction="#handleSearchPoliticians"/>
                         </VBox>
                     </TitledPane>
 
@@ -226,7 +232,10 @@
 
                             <TextField fx:id="searchElectionTypeField" promptText="Type..."/>
                             <TextField fx:id="searchElectionYearField" promptText="Year..."/>
-                            <Button text="Search Elections"/>
+
+                            <ComboBox fx:id="searchSortComboEle" promptText="Sort by..."/>
+
+                            <Button text="Search Elections" onAction="#handleSearchElections"/>
                         </VBox>
                     </TitledPane>
 

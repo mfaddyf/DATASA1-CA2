@@ -62,7 +62,7 @@ public class MLinkedList<L> implements Serializable { // class MLinkedList that 
         if (head == null) return false;
 
         // if the head contains the data, delete it
-        if (head.data.equals(data)) {
+        if (head.data == data) {
             head = head.next;
             return true;
         }
@@ -70,7 +70,7 @@ public class MLinkedList<L> implements Serializable { // class MLinkedList that 
         // if not, loop through and look for data
         Node<L> current = head;
         while (current.next != null) {
-            if (current.next.data.equals(data)) {
+            if (current.next.data == data) {
                 // skips the node containing data and cuts it out
                 current.next = current.next.next;
                 return true;

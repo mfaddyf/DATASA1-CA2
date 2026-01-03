@@ -4,14 +4,18 @@ import java.io.Serializable;
 
 public class Candidate implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private Politician politician;
     private String partyAtElection;
     private int votes;
+    private Election election;
 
-    public Candidate(Politician politician, String partyAtElection, int votes) {
+    public Candidate(Politician politician, String partyAtElection, int votes,  Election election) {
         this.politician = politician;
         this.partyAtElection = partyAtElection;
         this.votes = votes;
+        this.election = election;
     }
 
     // ---
@@ -28,6 +32,10 @@ public class Candidate implements Serializable {
 
     public int getVotes() {
         return votes;
+    }
+
+    public Election getElection() {
+        return election;
     }
 
     // ---
@@ -49,6 +57,8 @@ public class Candidate implements Serializable {
 
     @Override
     public String toString() {
-        return politician.getName() + " (" + partyAtElection + ") - " + votes + " votes";
+        if (politician == null) return "Invalid Candidate";
+        return politician.getName() + " | " + politician.getDob() +
+                " | " + partyAtElection + " | Votes: " + votes;
     }
 }

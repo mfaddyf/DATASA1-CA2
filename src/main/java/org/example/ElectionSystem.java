@@ -27,3 +27,7 @@ public class ElectionSystem extends Application {
 //  https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/Spinner.html
 //  https://openjfx.io/javadoc/25/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html
 //  https://www.w3schools.com/java/ref_string_trim.asp
+//
+// FOR SORTING
+//  https://www.w3schools.com/java/java_advanced_sorting.asp
+//  https://www.geeksforgeeks.org/java/interfaces-in-java/
