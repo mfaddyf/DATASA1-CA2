@@ -116,6 +116,13 @@ public class RMSortingAlgo {
         }
     }
 
+    public static class CandidateVotesDescComp implements eComparator<Candidate> {
+        @Override
+        public int compare(Candidate a, Candidate b) {
+            return Integer.compare(b.getVotes(), a.getVotes());
+        }
+    }
+
 
     //------------------------------------
     //Sorting MLinkedList

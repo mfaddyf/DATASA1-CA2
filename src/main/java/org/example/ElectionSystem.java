@@ -19,14 +19,18 @@ public class ElectionSystem extends Application {
     }
 }
 
+// ERRORS WITH CODE
+// - marking the winner of the elections in the search doesn't work, ordered by num of search desc
+// but it marks every candidate with the star, not sure why
+
 // CLASSES TAKEN FROM PREVIOUS PROJECTS
 // MLinkedList - Madison DataSA1-CA1
 // Node - Madison DataSA1-CA1
 
-// REFERENCES FOR WEBSITES I USED TO RESEARCH SOME THINGS
+// REFERENCES FOR WEBSITES USED TO RESEARCH
 //  https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/Spinner.html
 //  https://openjfx.io/javadoc/25/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html
-//  https://www.w3schools.com/java/ref_string_trim.asp
+
 //
 // FOR SORTING
 //  https://www.w3schools.com/java/java_advanced_sorting.asp

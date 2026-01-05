@@ -16,7 +16,7 @@
                     <MenuItem text="Reset System" onAction="#handleResetSystem"/>
                 </Menu>
                 <Menu text="View">
-                    <MenuItem text="Show Statistics"/>
+                    <MenuItem text="Show All" onAction="#handleShowSystemMap"/>
                 </Menu>
             </MenuBar>
 
@@ -164,11 +164,12 @@
                             </columnConstraints>
 
                             <Label text="Election:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <ComboBox fx:id="candidateElectionCombo"
+                            <ListView fx:id="candidateElectionList"
+                                      prefHeight="120"
                                       GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                            <Label text="Politician:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <ComboBox fx:id="candidatePoliticianCombo"
+                            <ListView fx:id="candidatePoliticianList"
+                                      prefHeight="120"
                                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                             <Label text="Party at Election:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>

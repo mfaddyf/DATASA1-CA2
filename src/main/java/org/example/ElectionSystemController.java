@@ -1,8 +1,13 @@
 package org.example;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class ElectionSystemController {
 
@@ -42,9 +47,9 @@ public class ElectionSystemController {
 
     // -------- CANDIDATE FIELDS --------
     @FXML
-    private ComboBox<String> candidateElectionCombo;
+    private ListView<Election> candidateElectionList;
     @FXML
-    private ComboBox<String> candidatePoliticianCombo;
+    private ListView<Politician> candidatePoliticianList;
     @FXML
     private TextField candidatePartyField;
     @FXML
@@ -90,6 +95,13 @@ public class ElectionSystemController {
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 20, 1)
         );
         electionSeatsSpinner.setEditable(true);
+        electionSeatsSpinner.focusedProperty().addListener((obs, oldV, newV) -> {
+            if (!newV) {
+                try {
+                    electionSeatsSpinner.increment(0); // forces commit
+                } catch (Exception ignored) {}
+            }
+        });
 
         candidateVotesSpinner.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1_000_000, 0)
@@ -192,16 +204,17 @@ public class ElectionSystemController {
         RMSortingAlgo.sortList(system.getPoliticians(), new RMSortingAlgo.PoliticianNameComp());
 
         politicianList.getItems().clear();
-        candidatePoliticianCombo.getItems().clear();
+        candidatePoliticianList.getItems().clear();
 
         Node<Politician> n = system.getPoliticians().getHead();
         while (n != null) {
             Politician p = n.data;
             politicianList.getItems().add(p);
-            candidatePoliticianCombo.getItems().add(p.getName() + " | " + p.getDob());
+            candidatePoliticianList.getItems().add(p);
             n = n.next;
         }
     }
+
 
     private void clearPoliticianInputs() {
         polNameField.clear();
@@ -267,17 +280,16 @@ public class ElectionSystemController {
 
     private void refreshElectionViews() {
         electionList.getItems().clear();
-        candidateElectionCombo.getItems().clear();
+        candidateElectionList.getItems().clear();
 
         Node<Election> n = system.getElections().getHead();
         while (n != null) {
             Election e = n.data;
             electionList.getItems().add(e);
-            candidateElectionCombo.getItems().add(e.toString());
+            candidateElectionList.getItems().add(e);
             n = n.next;
         }
     }
-
 
     private void clearElectionInputs() {
         electionTypeCombo.getSelectionModel().clearSelection();
@@ -301,17 +313,10 @@ public class ElectionSystemController {
 
     @FXML
     public void handleAddCandidate() {
-        String electionDisplay = candidateElectionCombo.getValue();
-        String politicianDisplay = candidatePoliticianCombo.getValue();
-        if (electionDisplay == null || politicianDisplay == null) return;
+        Election e = candidateElectionList.getSelectionModel().getSelectedItem();
+        Politician p = candidatePoliticianList.getSelectionModel().getSelectedItem();
 
-        Election e = findElectionByDisplay(electionDisplay);
-
-        String[] parts = politicianDisplay.split("\\|");
-        String name = parts[0].trim();
-        String dob = parts[1].trim();
-
-        Politician p = system.findPoliticianByNameAndDob(name, dob);
+        if (e == null || p == null) return;
 
         Candidate c = new Candidate(
                 p,
@@ -347,19 +352,12 @@ public class ElectionSystemController {
         refreshCandidateList(e);
     }
 
-
-
-
     private void loadSelectedCandidateIntoFields(Candidate c) {
-        if (c == null) return;
-
-        candidatePoliticianCombo.setValue(
-                c.getPolitician().getName() + " | " + c.getPolitician().getDob()
-        );
+        candidateElectionList.getSelectionModel().select(c.getElection());
+        candidatePoliticianList.getSelectionModel().select(c.getPolitician());
         candidatePartyField.setText(c.getPartyAtElection());
         candidateVotesSpinner.getValueFactory().setValue(c.getVotes());
     }
-
 
     private void showCandidatesForSelectedElection() {
         Election e = electionList.getSelectionModel().getSelectedItem();
@@ -380,20 +378,17 @@ public class ElectionSystemController {
 
     private void refreshCandidateViews() {
 
-        candidateElectionCombo.getItems().clear();
+        candidateElectionList.getItems().clear();
         Node<Election> eNode = system.getElections().getHead();
         while (eNode != null) {
-            candidateElectionCombo.getItems().add(eNode.data.toString());
+            candidateElectionList.getItems().add(eNode.data);
             eNode = eNode.next;
         }
 
-        candidatePoliticianCombo.getItems().clear();
+        candidatePoliticianList.getItems().clear();
         Node<Politician> pNode = system.getPoliticians().getHead();
         while (pNode != null) {
-            Politician p = pNode.data;
-            candidatePoliticianCombo.getItems().add(
-                    p.getName() + " | " + p.getDob()
-            );
+            candidatePoliticianList.getItems().add(pNode.data);
             pNode = pNode.next;
         }
 
@@ -405,9 +400,11 @@ public class ElectionSystemController {
 
 
 
+
+
     private void clearCandidateInputs() {
-        candidateElectionCombo.getSelectionModel().clearSelection();
-        candidatePoliticianCombo.getSelectionModel().clearSelection();
+        candidateElectionList.getSelectionModel().clearSelection();
+        candidatePoliticianList.getSelectionModel().clearSelection();
         candidatePartyField.clear();
         candidateVotesSpinner.getValueFactory().setValue(0);
     }
@@ -428,7 +425,7 @@ public class ElectionSystemController {
 
         if (sortOption != null) {
             switch (sortOption) {
-                case "Alphabetical (A–Z)":
+                case "Alphabetical (A-Z)":
                     RMSortingAlgo.sortList(results, new RMSortingAlgo.PoliticianNameComp());
                     break;
 
@@ -439,14 +436,51 @@ public class ElectionSystemController {
         }
 
         String output = "";
+
         Node<Politician> n = results.getHead();
         while (n != null) {
-            output += n.data.toString() + "\n";
+            Politician p = n.data;
+
+            // Basic info
+            output += p.getName() + " | "
+                    + p.getDob() + " | "
+                    + p.getParty() + " | "
+                    + p.getCounty() + " | "
+                    + p.getImageUrl() + "\n";
+
+            output += "---------------------------------\n";
+            output += "Candidate in the following elections:\n";
+
+            // Elections they ran in
+            Node<Election> eNode = system.getElections().getHead();
+            while (eNode != null) {
+                Election e = eNode.data;
+
+                Node<Candidate> cNode = e.getCandidates().getHead();
+                while (cNode != null) {
+                    Candidate c = cNode.data;
+
+                    if (c.getPolitician() == p) {
+                        output += e.getType() + " | "
+                                + e.getLocation() + " | "
+                                + e.getDate() + " | Seats: "
+                                + e.getSeats() + " | "
+                                + c.getPartyAtElection() + "\n";
+                    }
+
+                    cNode = cNode.next;
+                }
+
+                eNode = eNode.next;
+            }
+
+            output += "\n"; // blank line between politicians
             n = n.next;
         }
 
         searchResultsArea.setText(output);
     }
+
 
     @FXML
     public void handleSearchElections() {
@@ -474,13 +508,55 @@ public class ElectionSystemController {
         }
 
         String output = "";
+
         Node<Election> n = results.getHead();
         while (n != null) {
-            output += n.data.toString() + "\n";
+            Election e = n.data;
+
+            output += e.getType() + " | "
+                    + e.getLocation() + " | "
+                    + e.getDate() + " | "
+                    + "Seats: " + e.getSeats() + "\n";
+
+            output += "---------------------------------\n";
+            output += "Candidates (sorted by votes):\n";
+
+            MLinkedList<Candidate> sorted = new MLinkedList<>();
+            Node<Candidate> cNode = e.getCandidates().getHead();
+            while (cNode != null) {
+                sorted.addElement(cNode.data);
+                cNode = cNode.next;
+            }
+
+            RMSortingAlgo.sortList(sorted, new RMSortingAlgo.CandidateVotesDescComp());
+
+            int seats = e.getSeats();
+            int index = 0;
+
+            Node<Candidate> sortedNode = sorted.getHead();
+            while (sortedNode != null) {
+                Candidate c = sortedNode.data;
+
+                String line = c.getPolitician().getName() + " | "
+                        + c.getVotes() + " votes | "
+                        + c.getPartyAtElection();
+
+                if (index < seats) {
+                    line = "* " + line;
+                }
+
+                output += line + "\n";
+
+                index++;
+                sortedNode = sortedNode.next;
+            }
+
+            output += "\n"; // blank line between elections
             n = n.next;
         }
 
         searchResultsArea.setText(output);
+
     }
 
 
@@ -516,6 +592,127 @@ public class ElectionSystemController {
         refreshElectionViews();
         refreshCandidateViews();
         searchResultsArea.clear();
+    }
+
+    // ============================================================
+    // MAP BUILDING
+    // ============================================================
+    @FXML
+    public void handleShowSystemMap() {
+        Stage mapStage = new Stage();
+        mapStage.setTitle("Election Browser");
+
+        Pane mapPane = new Pane();
+        mapPane.setPrefSize(600, 600);
+
+        int electionIndex = 0;
+        Node<Election> eNode = system.getElections().getHead();
+
+        while (eNode != null) {
+            Election e = eNode.data;
+
+            Label electionLabel = new Label(
+                    e.getType() + " | " + e.getLocation() + " | " + e.getDate()
+            );
+            electionLabel.setLayoutX(20);
+            electionLabel.setLayoutY(40 + (electionIndex * 40));
+            electionLabel.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
+
+            // Clicking an election opens sorted candidate list
+            electionLabel.setOnMouseClicked(ev -> showElectionPopup(e));
+
+            mapPane.getChildren().add(electionLabel);
+
+            electionIndex++;
+            eNode = eNode.next;
+        }
+
+        Scene scene = new Scene(mapPane);
+        mapStage.setScene(scene);
+        mapStage.show();
+    }
+
+
+
+    private void showPoliticianPopup(Politician p) {
+        Stage stage = new Stage();
+        stage.setTitle("Politician Details");
+
+        VBox box = new VBox(10);
+        box.setPadding(new Insets(10));
+
+        Label name = new Label("Name: " + p.getName());
+        Label party = new Label("Party: " + p.getParty());
+        Label county = new Label("County: " + p.getCounty());
+        Label url = new Label("Photo URL: " + p.getImageUrl());
+
+        box.getChildren().addAll(name, party, county, url);
+
+        stage.setScene(new Scene(box, 300, 200));
+        stage.show();
+    }
+
+
+    private void showElectionPopup(Election e) {
+        Stage stage = new Stage();
+        stage.setTitle("Election Details");
+
+        VBox box = new VBox(10);
+        box.setPadding(new Insets(10));
+
+        Label title = new Label(e.getType() + " Election");
+        title.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
+
+        Label info = new Label(
+                "Location: " + e.getLocation() + "\n" +
+                        "Date: " + e.getDate() + "\n" +
+                        "Seats: " + e.getSeats()
+        );
+
+        Label candidatesHeader = new Label("Candidates (sorted by votes):");
+        candidatesHeader.setStyle("-fx-font-weight: bold;");
+
+        ListView<Label> candidateList = new ListView<>();
+
+        // Copy and sort candidates
+        MLinkedList<Candidate> sorted = new MLinkedList<>();
+        Node<Candidate> cNode = e.getCandidates().getHead();
+        while (cNode != null) {
+            sorted.addElement(cNode.data);
+            cNode = cNode.next;
+        }
+
+        RMSortingAlgo.sortList(sorted, new RMSortingAlgo.CandidateVotesDescComp());
+
+        // Highlight ONLY the first candidate
+        boolean first = true;
+
+        Node<Candidate> sortedNode = sorted.getHead();
+        while (sortedNode != null) {
+            Candidate c = sortedNode.data;
+
+            Label row = new Label(
+                    c.getPolitician().getName() + " — " + c.getVotes() + " votes"
+            );
+
+            if (first) {
+                row.setText(row.getText().toUpperCase());
+                row.setStyle("-fx-font-weight: bold; -fx-text-fill: red;");
+                first = false;
+            }
+
+            // Clicking candidate → show politician details
+            row.setOnMouseClicked(ev -> showPoliticianPopup(c.getPolitician()));
+
+            candidateList.getItems().add(row);
+
+            sortedNode = sortedNode.next;
+        }
+
+        box.getChildren().addAll(title, info, candidatesHeader, candidateList);
+
+        stage.setScene(new Scene(box, 350, 450));
+        stage.show();
     }
 
     // ============================================================
