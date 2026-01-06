@@ -4,12 +4,14 @@ import java.io.*;
 
 public class ElectionSystemManager implements Serializable {
 
+    // two hash tables
     private RMHashTable politicianTable;
     private RMHashTable electionTable;
 
     private MLinkedList<Politician> politicians;
     private MLinkedList<Election> elections;
 
+    // declaring and creating the hashtables / linkedlists
     public ElectionSystemManager() {
         politicianTable = new RMHashTable();
         electionTable = new RMHashTable();
@@ -35,24 +37,48 @@ public class ElectionSystemManager implements Serializable {
     // ADD METHODS
     // ============================================================
 
+    /**
+     * Adds the politician to the system.
+     * If the politician's key isn't already in the hashtable, the politician is also given a key
+     * which is appended to the linked list.
+     *
+     * @param p the Politician to add
+     */
     public void addPolitician(Politician p) {
         String key = buildPoliticianKey(p);
 
+        // checks to see if the key exists
         if (!politicianTable.containsKey(key)) {
             politicians.addElement(p);
         }
+        // inserts / updates key
         politicianTable.put(key, p);
     }
 
+    /**
+     * Adds the election to the system.
+     * If the election's key isn't already in the hashtable, the election is also given a key
+     * which is appended to the linked list.
+     *
+     * @param e the Election to add
+     */
     public void addElection(Election e) {
         String key = buildElectionKey(e);
 
+        // checks to see if the key exists
         if (!electionTable.containsKey(key)) {
             elections.addElement(e);
         }
+        // inserts / updates key
         electionTable.put(key, e);
     }
 
+    /**
+     * Adds a candidate to a specific election
+     *
+     * @param election the Election the candidate is running in
+     * @param candidate the Candidate that is to be added to the election
+     */
     public void addCandidateToElection(Election election, Candidate candidate) {
         if (election != null && candidate != null) {
             election.addCandidate(candidate);
@@ -63,6 +89,13 @@ public class ElectionSystemManager implements Serializable {
     // UPDATE METHODS
     // ============================================================
 
+    /**
+     * Upadtes an already existing politician by removing the old key from the hash table, modifying the
+     * original object, and inserting the info under a new key.
+     *
+     * @param original the existing politician to update
+     * @param updated the updated politician with all the new fields
+     */
     public void updatePolitician(Politician original, Politician updated) {
         String oldKey = buildPoliticianKey(original);
 
@@ -81,44 +114,70 @@ public class ElectionSystemManager implements Serializable {
         politicianTable.put(newKey, original);
     }
 
-
+    /**
+     * Upadtes an already existing election by removing the old key from the hash table, modifying the
+     * original object, and inserting the info under a new key.
+     *
+     * @param original the existing election to update
+     * @param updated the updated election with all the new fields
+     */
     public void updateElection(Election original, Election updated) {
         String oldKey = buildElectionKey(original);
+
+        // remove old key
         electionTable.remove(oldKey);
 
+        // updates fields
         original.setType(updated.getType());
         original.setLocation(updated.getLocation());
         original.setDate(updated.getDate());
         original.setSeats(updated.getSeats());
 
+        // inserts new key
         String newKey = buildElectionKey(original);
         electionTable.put(newKey, original);
     }
-
-
 
     // ============================================================
     // DELETE METHODS
     // ============================================================
 
+    /**
+     * Deletes a politician from both the hash table and the linked list.
+     *
+     * @param p the politician to delete
+     * @return true if removed, false otherwise
+     */
     public boolean deletePolitician(Politician p) {
+        // if empty then return false
         if (p == null) return false;
 
         String key = buildPoliticianKey(p);
+        // if built key is removed, removed = true
         boolean removed = politicianTable.remove(key);
 
+        // if removed = true, remove same politician from linked list
         if (removed) {
             politicians.remove(p);
         }
-
         return removed;
     }
 
-
+    /**
+     * Deletes an election from both the hash table and the linked list.
+     *
+     * @param e the election to delete
+     * @return true if removed, false otherwise
+     */
     public boolean deleteElection(Election e) {
-        String key = buildElectionKey(e);
+        // if empty then return false
+        if (e == null) return false;
 
+        String key = buildElectionKey(e);
+        // if built key is removed, removed = true
         boolean removed = electionTable.remove(key);
+
+        // if removed = true, remove same election from linked list
         if (removed) {
             elections.remove(e);
         }
@@ -128,20 +187,6 @@ public class ElectionSystemManager implements Serializable {
     // ============================================================
     // FIND METHODS
     // ============================================================
-
-    public Politician findPoliticianByNameAndDob(String name, String dob) {
-        String key = name.toLowerCase() + "|" + dob;
-        Object o = politicianTable.get(key);
-        if (o instanceof Politician) return (Politician) o;
-        return null;
-    }
-
-    public Election findElection(String type, String location, String date) {
-        String key = type.toLowerCase() + "|" + location.toLowerCase() + "|" + date;
-        Object o = electionTable.get(key);
-        if (o instanceof Election) return (Election) o;
-        return null;
-    }
 
     public MLinkedList<Politician> getPoliticians() {
         return politicians;
@@ -155,6 +200,15 @@ public class ElectionSystemManager implements Serializable {
     // SEARCH METHODS
     // ============================================================
 
+    /**
+     * Searches all politicians using optional filters for name, party, county.
+     * Matching is case-insensitive.
+     *
+     * @param namePart partial or full name to match
+     * @param party partial or full party name to match
+     * @param county partial or full county name to match
+     * @return a linked list of matching Politicians
+     */
     public MLinkedList<Politician> searchPoliticians(String namePart, String party, String county) {
 
         MLinkedList<Politician> results = new MLinkedList<>();
@@ -185,6 +239,14 @@ public class ElectionSystemManager implements Serializable {
         return results;
     }
 
+    /**
+     * Searches all elections using optional filters for type, year.
+     * Matching is case-insensitive.
+     *
+     * @param typePart partial or full election type to match
+     * @param yearPart partial or full year to match
+     * @return a linked list of matching Elections
+     */
     public MLinkedList<Election> searchElections(String typePart, String yearPart) {
 
         MLinkedList<Election> results = new MLinkedList<>();
@@ -216,8 +278,9 @@ public class ElectionSystemManager implements Serializable {
     // ============================================================
 
     /**
+     * Saves the entire system state to a file using java serialisation.
      *
-     * @param filename
+     * @param filename the file to write to / create
      */
     public void saveToFile(String filename) {
         try (ObjectOutputStream oos =
@@ -229,9 +292,10 @@ public class ElectionSystemManager implements Serializable {
     }
 
     /**
+     * Loads saved election system manager, if the loading fails, a new manager is created
      *
-     * @param filename
-     * @return
+     * @param filename the file to load from
+     * @return loaded manager or a new manager
      */
     public static ElectionSystemManager loadFromFile(String filename) {
         try (ObjectInputStream ois =
@@ -246,7 +310,7 @@ public class ElectionSystemManager implements Serializable {
     }
 
     /**
-     *
+     * Resets the system by clearing all hashtables and linked lists
      */
     public void reset() {
         politicianTable = new RMHashTable();
@@ -260,9 +324,10 @@ public class ElectionSystemManager implements Serializable {
     // ============================================================
 
     /**
+     * Ensures that any string used for searching, filtering, obj creation is never null
      *
-     * @param s
-     * @return
+     * @param s the input string
+     * @return a non-null, trimmed string, returns an empty string if null String s is null
      */
     private String safe(String s) {
         return (s == null) ? "" : s.trim();

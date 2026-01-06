@@ -2,6 +2,7 @@ package org.example;
 
 public class RMSortingAlgo {
 
+    // comparator interface for custom comparisons
     public interface eComparator <L> {
         int compare(L a, L b);
     }
@@ -116,6 +117,9 @@ public class RMSortingAlgo {
         }
     }
 
+    /**
+     * Sorts candidates by the amount of votes they have (highest-lowest)
+     */
     public static class CandidateVotesDescComp implements eComparator<Candidate> {
         @Override
         public int compare(Candidate a, Candidate b) {
@@ -129,20 +133,22 @@ public class RMSortingAlgo {
     //------------------------------------
     public static <L> void sortList(MLinkedList<L> list, eComparator<L> comp) {
 
-        if (list == null) return;
+        if (list == null) return; // nothing to sort
 
-        int n = list.size();
+        int n = list.size(); // number of elements
 
-        if (n <= 1) return;
+        if (n <= 1) return; // already sorted
 
+        // copy the list into an array
         L[] a = (L[]) new Object[n];
-
         for (int i = 0; i < n; i++) {
             a[i] = list.get(i);
         }
 
+        // sort said array
         mergeSort(a, comp);
 
+        // rebuild the list in the sorted order
         list.clear();
         for (int i = 0; i < n; i++) {
             list.addElement(a[i]);

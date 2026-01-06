@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 public class Candidate implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private Politician politician;
     private String partyAtElection;
     private int votes;

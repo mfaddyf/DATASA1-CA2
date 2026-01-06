@@ -82,6 +82,11 @@ public class ElectionSystemController {
     // ============================================================
     // INITIALIZE
     // ============================================================
+    /**
+     * Initializes UI components, sets up listeners, configures spinners,
+     * and prepares sorting options. Automatically called
+     * by JavaFX after FXML loading.
+     */
     @FXML
     public void initialize() {
 
@@ -146,7 +151,10 @@ public class ElectionSystemController {
     // POLITICIANS
     // ============================================================
 
-    @FXML
+    /**
+     * Creates a new Politician from input fields and adds it to the system.
+     * Refreshes all relevant UI lists afterward.
+     */
     public void handleAddPolitician() {
         Politician p = new Politician(
                 safe(polNameField),
@@ -163,7 +171,9 @@ public class ElectionSystemController {
         clearPoliticianInputs();
     }
 
-    @FXML
+    /**
+     * Updates the currently selected Politician using the values in the input fields.
+     */
     public void handleUpdatePolitician() {
         if (selectedPolitician == null) return;
 
@@ -179,8 +189,9 @@ public class ElectionSystemController {
         refreshPoliticianViews();
     }
 
-
-    @FXML
+    /**
+     * Deletes the selected Politician from the system and refreshes the UI.
+     */
     public void handleDeletePolitician() {
         Politician selected = politicianList.getSelectionModel().getSelectedItem();
         if (selected == null) return;
@@ -190,6 +201,12 @@ public class ElectionSystemController {
         candidateList.getItems().clear();
     }
 
+    /**
+     * Loads the details of the selected Politician into the
+     * corresponding input fields for editing.
+     *
+     * @param p the Politician whose details should be displayed.
+     */
     private void loadSelectedPoliticianIntoFields(Politician p) {
         if (p == null) return;
 
@@ -199,7 +216,11 @@ public class ElectionSystemController {
         polCountyField.setText(p.getCounty());
         polImageField.setText(p.getImageUrl());
     }
-
+    /**
+     * Refreshes all UI list views that display politicians.
+     * Includes: sorting the list by name, updating main Politician list,
+     * updating candidate-creation Politician list.
+     */
     private void refreshPoliticianViews() {
         RMSortingAlgo.sortList(system.getPoliticians(), new RMSortingAlgo.PoliticianNameComp());
 
@@ -215,7 +236,9 @@ public class ElectionSystemController {
         }
     }
 
-
+    /**
+     * Clears all Politician input fields.
+     */
     private void clearPoliticianInputs() {
         polNameField.clear();
         polDobField.clear();
@@ -228,7 +251,10 @@ public class ElectionSystemController {
     // ELECTIONS
     // ============================================================
 
-    @FXML
+    /**
+     * Creates a new Election from input fields and adds it to the system.
+     * Refreshes all relevant UI lists afterward.
+     */
     public void handleAddElection() {
         Election e = new Election(
                 electionTypeCombo.getValue(),
@@ -244,7 +270,9 @@ public class ElectionSystemController {
         clearElectionInputs();
     }
 
-    @FXML
+    /**
+     * Updates the currently selected Election using the values in the input fields.
+     */
     public void handleUpdateElection() {
         if (selectedElection == null) return;
 
@@ -259,9 +287,9 @@ public class ElectionSystemController {
         refreshElectionViews();
     }
 
-
-
-    @FXML
+    /**
+     * Deletes the selected Election from the system and refreshed the UI.
+     */
     public void handleDeleteElection() {
         Election selected = electionList.getSelectionModel().getSelectedItem();
         if (selected == null) return;
@@ -271,13 +299,25 @@ public class ElectionSystemController {
         candidateList.getItems().clear();
     }
 
+    /**
+     * Loads the details of the selected Election into the
+     * corresponding input fields for editing.
+     *
+     * @param e the politician whose details should be displayed.
+     */
     private void loadElectionIntoFields(Election e) {
+        if (e == null) return;
+
         electionTypeCombo.setValue(e.getType());
         electionLocationField.setText(e.getLocation());
         electionDateField.setText(e.getDate());
         electionSeatsSpinner.getValueFactory().setValue(e.getSeats());
     }
 
+    /**
+     * Refreshes all UI list views that display Elections.
+     * Includes: updating main election list, updating candidate-creation election list.
+     */
     private void refreshElectionViews() {
         electionList.getItems().clear();
         candidateElectionList.getItems().clear();
@@ -291,6 +331,9 @@ public class ElectionSystemController {
         }
     }
 
+    /**
+     * Clears all Election input fields.
+     */
     private void clearElectionInputs() {
         electionTypeCombo.getSelectionModel().clearSelection();
         electionLocationField.clear();
@@ -298,20 +341,14 @@ public class ElectionSystemController {
         electionSeatsSpinner.getValueFactory().setValue(1);
     }
 
-    private Election findElectionByDisplay(String display) {
-        Node<Election> n = system.getElections().getHead();
-        while (n != null) {
-            if (n.data.toString().equals(display)) return n.data;
-            n = n.next;
-        }
-        return null;
-    }
-
     // ============================================================
     // CANDIDATES
     // ============================================================
 
-    @FXML
+    /**
+     * Creates a new Candidate from the selected Election and Politician,
+     * then adds it to the chosen Election.
+     */
     public void handleAddCandidate() {
         Election e = candidateElectionList.getSelectionModel().getSelectedItem();
         Politician p = candidatePoliticianList.getSelectionModel().getSelectedItem();
@@ -330,7 +367,9 @@ public class ElectionSystemController {
         clearCandidateInputs();
     }
 
-    @FXML
+    /**
+     * Updates the selected Candidates vote count and party.
+     */
     public void handleUpdateCandidate() {
         Candidate c = candidateList.getSelectionModel().getSelectedItem();
         if (c == null) return;
@@ -340,8 +379,9 @@ public class ElectionSystemController {
         candidateList.refresh();
     }
 
-
-    @FXML
+    /**
+     * Removes the selected Candidate from its associated Election.
+     */
     public void handleDeleteCandidate() {
         Candidate c = candidateList.getSelectionModel().getSelectedItem();
         if (c == null) return;
@@ -352,6 +392,12 @@ public class ElectionSystemController {
         refreshCandidateList(e);
     }
 
+    /**
+     * Loads details of the selected Candidate into the
+     * corresponding input fields for editing.
+     *
+     * @param c the Candidate whose details should be displayed.
+     */
     private void loadSelectedCandidateIntoFields(Candidate c) {
         candidateElectionList.getSelectionModel().select(c.getElection());
         candidatePoliticianList.getSelectionModel().select(c.getPolitician());
@@ -364,7 +410,11 @@ public class ElectionSystemController {
         refreshCandidateList(e);
     }
 
-
+    /**
+     * Refreshed the Candidate list for the currently selected election.
+     *
+     * @param e the Election whose candidates should be displayed.
+     */
     private void refreshCandidateList(Election e) {
         candidateList.getItems().clear();
         if (e == null) return;
@@ -376,6 +426,10 @@ public class ElectionSystemController {
         }
     }
 
+    /**
+     * Refreshed all UI components related to Candidates, including
+     * Election and Politician selectors.
+     */
     private void refreshCandidateViews() {
 
         candidateElectionList.getItems().clear();
@@ -398,10 +452,9 @@ public class ElectionSystemController {
         clearCandidateInputs();
     }
 
-
-
-
-
+    /**
+     * Clears all the Candidate input fields and resets the vote spinner.
+     */
     private void clearCandidateInputs() {
         candidateElectionList.getSelectionModel().clearSelection();
         candidatePoliticianList.getSelectionModel().clearSelection();
@@ -413,7 +466,12 @@ public class ElectionSystemController {
     // SEARCH
     // ============================================================
 
-    @FXML
+    /**
+     * Searches for Politicians using the values entered the search fields.
+     *
+     * Results can be sorted and displayed in a formatted string, including
+     * the Elections each Politician has participated in.
+     */
     public void handleSearchPoliticians() {
         MLinkedList<Politician> results = system.searchPoliticians(
                 safe(searchPolNameField),
@@ -441,7 +499,6 @@ public class ElectionSystemController {
         while (n != null) {
             Politician p = n.data;
 
-            // Basic info
             output += p.getName() + " | "
                     + p.getDob() + " | "
                     + p.getParty() + " | "
@@ -451,7 +508,6 @@ public class ElectionSystemController {
             output += "---------------------------------\n";
             output += "Candidate in the following elections:\n";
 
-            // Elections they ran in
             Node<Election> eNode = system.getElections().getHead();
             while (eNode != null) {
                 Election e = eNode.data;
@@ -474,14 +530,19 @@ public class ElectionSystemController {
                 eNode = eNode.next;
             }
 
-            output += "\n"; // blank line between politicians
+            output += "\n";
             n = n.next;
         }
 
         searchResultsArea.setText(output);
     }
 
-
+    /**
+     * Searches for Elections using the values entered the search fields.
+     *
+     * Results can be sorted and displayed in a formatted string, including
+     * each Candidate that has run in each Election.
+     */
     @FXML
     public void handleSearchElections() {
         MLinkedList<Election> results = system.searchElections(
@@ -551,7 +612,7 @@ public class ElectionSystemController {
                 sortedNode = sortedNode.next;
             }
 
-            output += "\n"; // blank line between elections
+            output += "\n";
             n = n.next;
         }
 
@@ -559,18 +620,20 @@ public class ElectionSystemController {
 
     }
 
-
-
     // ============================================================
     // FILE OPERATIONS
     // ============================================================
 
-    @FXML
+    /**
+     * Saves the current system to a file called "elections.dat".
+     */
     public void handleSaveData() {
         system.saveToFile("elections.dat");
     }
 
-    @FXML
+    /**
+     * Loads the system from the "elections.dat" file.
+     */
     public void handleLoadData() {
         system = ElectionSystemManager.loadFromFile("elections.dat");
 
@@ -584,8 +647,9 @@ public class ElectionSystemController {
         }
     }
 
-
-    @FXML
+    /**
+     * Clears all system data and resets all UI components.
+     */
     public void handleResetSystem() {
         system.reset();
         refreshPoliticianViews();
@@ -597,7 +661,21 @@ public class ElectionSystemController {
     // ============================================================
     // MAP BUILDING
     // ============================================================
-    @FXML
+
+    /*
+     * This map building is used for our GUI drill-down.
+     *
+     * The first pane shows a list of all Elections that have been created.
+     * Clicking into an Election will show all the Candidates who ran in that Election
+     * and also shows all of their votes.
+     * Further clicking into a Candidate will show all their associated details as a
+     * Politician, including location, dob, photo url.
+     */
+
+    /**
+     * Opens a new window displaying all the Elections in a vertical list.
+     * Clicking an Election will show all the Candidates of that Election.
+     */
     public void handleShowSystemMap() {
         Stage mapStage = new Stage();
         mapStage.setTitle("Election Browser");
@@ -618,7 +696,6 @@ public class ElectionSystemController {
             electionLabel.setLayoutY(40 + (electionIndex * 40));
             electionLabel.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
 
-            // Clicking an election opens sorted candidate list
             electionLabel.setOnMouseClicked(ev -> showElectionPopup(e));
 
             mapPane.getChildren().add(electionLabel);
@@ -632,8 +709,11 @@ public class ElectionSystemController {
         mapStage.show();
     }
 
-
-
+    /**
+     * Displays a window showing information about a specific Politician.
+     *
+     * @param p the Politician to display
+     */
     private void showPoliticianPopup(Politician p) {
         Stage stage = new Stage();
         stage.setTitle("Politician Details");
@@ -652,7 +732,11 @@ public class ElectionSystemController {
         stage.show();
     }
 
-
+    /**
+     * Displays a window showing information about a specific Election.
+     *
+     * @param e the Election to display
+     */
     private void showElectionPopup(Election e) {
         Stage stage = new Stage();
         stage.setTitle("Election Details");
@@ -674,7 +758,6 @@ public class ElectionSystemController {
 
         ListView<Label> candidateList = new ListView<>();
 
-        // Copy and sort candidates
         MLinkedList<Candidate> sorted = new MLinkedList<>();
         Node<Candidate> cNode = e.getCandidates().getHead();
         while (cNode != null) {
@@ -684,7 +767,6 @@ public class ElectionSystemController {
 
         RMSortingAlgo.sortList(sorted, new RMSortingAlgo.CandidateVotesDescComp());
 
-        // Highlight ONLY the first candidate
         boolean first = true;
 
         Node<Candidate> sortedNode = sorted.getHead();
@@ -701,7 +783,6 @@ public class ElectionSystemController {
                 first = false;
             }
 
-            // Clicking candidate → show politician details
             row.setOnMouseClicked(ev -> showPoliticianPopup(c.getPolitician()));
 
             candidateList.getItems().add(row);
@@ -719,6 +800,13 @@ public class ElectionSystemController {
     // HELPERS
     // ============================================================
 
+    /**
+     * Safely extracts and trims text from the TextField f.
+     * If the field is null, an empty string is returned.
+     *
+     * @param f the TextField to read from
+     * @return a trimmed, non-null string
+     */
     private String safe(TextField f) {
         return f.getText() == null ? "" : f.getText().trim();
     }

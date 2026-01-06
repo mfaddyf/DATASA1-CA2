@@ -4,11 +4,7 @@ import java.io.Serializable;
 
 public class RMHashTable implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private static class Node implements Serializable {
-
-        private static final long serialVersionUID = 1L;
 
         String key; // unique ID e.g. PoliticianID
         Object value; // object stored like politician, election etc
@@ -21,10 +17,10 @@ public class RMHashTable implements Serializable {
         }
     }
 
-    //Array of buckets (each bucket is the head of a linked list)
+    // array of buckets (each bucket is the head of a linked list)
     private Node[] table;
 
-    //Number of key-value pairs stored
+    // number of key-value pairs stored
     private int size;
 
     public RMHashTable(int capacity) {
@@ -33,15 +29,15 @@ public class RMHashTable implements Serializable {
     }
 
     private int RMHash(String key) {
-        int h = 0;
+        int h = 0; // start hash
         for (int i = 0; i < key.length(); i++) {
-            h = (31 * h + key.charAt(i)) % table.length;
+            h = (31 * h + key.charAt(i)) % table.length; //polynomial hash
         }
-        return Math.abs(h);
+        return Math.abs(h); //ensure hash is positive
     }
 
     public RMHashTable() {
-        this(111);
+        this(111); // default size
     }
 
     public void put(String key, Object value) {
@@ -59,14 +55,14 @@ public class RMHashTable implements Serializable {
                 current.value = value;
                 return;
             }
-            current = current.next;
+            current = current.next; // move along the chain
         }
 
         // if key is not found then insert new node at the head of the chain
         Node newNode = new Node(key, value);
-        newNode.next = table[index];
-        table[index] = newNode;
-        size++;
+        newNode.next = table[index]; // link old head
+        table[index] = newNode; // new head
+        size++; // increase the count
     }
 
     public Object get(String key) {
@@ -77,29 +73,30 @@ public class RMHashTable implements Serializable {
         //Traverse the linked list at this bucket
         Node current = table[index];
         while (current != null) {
-            if (current.key.equals(key)) {
-                return current.value; //key found
+            if (current.key.equals(key)) { //key found
+                return current.value;
             }
-            current = current.next;
+            current = current.next; // move to the next
         }
 
         return null; //key not found
     }
 
+    // removing key-value pair
     public boolean remove(String key) {
-        int index = RMHash(key);
-        Node current = table[index];
-        Node prev = null;
+        int index = RMHash(key); // find bucket
+        Node current = table[index]; // start chain
+        Node prev = null; // previous node
 
         while (current != null) {
-            if (current.key.equals(key)) {
+            if (current.key.equals(key)) { //found key
                 if (prev == null) {
-                    table[index] = current.next;
+                    table[index] = current.next; // remove head
                 } else {
-                    prev.next = current.next;
+                    prev.next = current.next; // unlink node
                 }
-                size--;
-                return true;
+                size--; // decrease count
+                return true; // removed
             }
             prev = current;
             current = current.next;
@@ -107,11 +104,12 @@ public class RMHashTable implements Serializable {
         return false;
     }
 
+    // checking if a key exists
     public boolean containsKey(String key) {
         return get(key) != null;
     }
 
-
+    // return number of entries
     public int size() {
         return size;
     }
